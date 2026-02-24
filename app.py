@@ -10,7 +10,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from PIL import Image, ImageDraw, ImageFont
 
 # Hardware Imports (Assuming driver folder is in the same directory)
-from driver import epd7in5b 
+from driver.epd7in5b import EPD
 
 # Ensure time is handled correctly for your region
 os.environ['TZ'] = 'Asia/Kolkata'
@@ -128,7 +128,7 @@ def index():
 
 # --- HARDWARE DISPLAY LOOP ---
 def draw_display():
-    epd = epd7in5b.EPD()
+    epd = EPD()
     epd.init()
     
     image = Image.new('L', (640, 384), 255) # 255 is white
