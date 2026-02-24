@@ -24,7 +24,7 @@
  # THE SOFTWARE.
  #
 
-from driver.epdif import *
+import driver.epdif as epdif
 from PIL import Image
 import RPi.GPIO as GPIO
 import logging
