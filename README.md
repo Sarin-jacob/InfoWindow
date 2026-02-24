@@ -1,61 +1,78 @@
-![alt text](infowindow.jpg)
+# InfoWindow 
 
-
-# Infowindow
-Rapsberry pi powered e-ink display for displaying information in an always on state. There are several other iterations of this project online, but they didnt do quite what I wanted them to. This is my version. Also keeping up my python skills as they dont get used as much as they used to!
-
-The functionality is not meant to be an "end all solution for calendaring and Todo lists" The intent is to provide an *always  on* display to show me what is coming up next. I can then check in browser, phone, etc for details and updates to the data. In your face reminder.
-
-[See the video and Bill of materials on the Element14 Community](https://www.element14.com/community/docs/DOC-94108/l/episode-422-raspberry-pi-e-ink-task-organizer?ICID=e14-presents-videos)
-
-<div align="center">
-  <a href="#features">Features</a> |
-  <a href="#installation">Installation</a> | 
-  <a href="#configuration">Configuration</a> | 
-  <a href="#running">Running</a> | 
-</div>
+InfoWindow is a smart, hardware-responsive e-ink display powered by a Raspberry Pi and a Waveshare 7.5" (V2) screen. It features a desk calendar/clock, a task manager (Todoist/Google Calendar), and a custom photo viewer. Everything is managed through a lightweight local web interface and controlled physically via GPIO buttons.
 
 ## Features
-* **Calendar**
-  * Google Calendar is the only calendar currently supported
-* **Todo List**
-  * Todoist
-  * Teamwork.com
-* **Weather**
-  * Open Weather Map current data only. Future plan for forecast data.
+* **Page 1: Clock & Environment** - Displays the current time, date, and local room temperature/humidity via a DHT11 sensor. Updates every 5 minutes.
+* **Page 2: Task View** - Integrates with Todoist or Google Calendar to display your upcoming tasks.
+* **Page 3: Photo Viewer** - Displays a custom image. Images uploaded via the web interface are automatically dithered and converted to a 3-color (Red/Black/White) palette optimized for the e-ink display.
+* **Web Control Panel** - A local Flask web server (`http://<pi-ip>:5000`) to switch pages, change task sources, and upload photos.
+* **Physical Buttons** - Instant page-switching using hardware interrupts.
 
-## Installation
-### Get software
-Clone this repo onto your raspberry pi. Does not really matter where it is, but good option is in the `pi` users home directory: `/home/pi/InfoWindow`
+## Hardware Requirements
+* Raspberry Pi (Zero W, 3, or 4 recommended)
+* Waveshare 7.5" E-Ink Display HAT (V2 - 800x480 Resolution)
+* DHT11 (or DHT22) Temperature and Humidity Sensor (Connected to GPIO 5)
+* 3x Push Buttons (Connected to GPIO 6, 13, and 19)
 
-### Setup python modules
-Run `pip install -r requirements.txt`. This should install all required modules. I stuck to basic standard modules for ease of installation.
+---
 
-#### Google Calendar API
-You will need to install the google python calendar api. This is a little confusing, but if you [click here](https://developers.google.com/calendar/quickstart/python) and follow the install instructions up through "Step 2" you should be on your way!
+## 🛠 Setup & Installation
 
-## Configuration
-You will need to configure a few things such as API Keys and location. Copy config.json-sample to config.json. Edit config.json to add your api keys and other information. 
+### 1. Enable Hardware SPI
+The e-ink display requires the hardware SPI interface to be enabled on your Raspberry Pi.
+1. Run `sudo raspi-config` in your terminal.
+2. Navigate to **Interface Options** > **SPI**.
+3. Select **<Yes>** to enable the SPI interface.
+4. Reboot your Pi: `sudo reboot`
 
-### General
-* rotation: 0 - This is the rotation of the display in degrees. Leave at zero if you use it as a desktop display. Change to 180 if you have it mounted and hanging from a shelf.
+### 2. Install System Dependencies
+Modern Raspberry Pi OS (Bookworm and later) requires specific C-libraries and headers to compile the GPIO and sensor bindings. Run the following command:
+```bash
+sudo apt update
+sudo apt install -y libgpiod2 swig liblgpio-dev python3-dev
+```
 
-### Todo
-Todoist is the current active module in this code. It only requires `api_key`. Teamwork also requires a 'site' key. If using google tasks, leave this as null `todo: null`
-* api_key: Enter your todoist API key.
+### 3. Install `uv`
 
-### Weather
-Open Weather Map is where the data is coming from in the default module. This requires a few keys.
-* api_key: Get your api key from OWM website.
-* city: Look at OWM docs to figure what your city name is. Mine is "Sacramento,US"
-* units: This can either be `imperial` or `metric`
+This project uses `uv` for blazing-fast Python package management and virtual environment isolation. If you don't have it installed:
 
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
 
-## Running
-### First Run
-You should run the script manually the first time so that Googles auth modules can run interactivly. Once that has completed you will want to add this to CRON so it runs every few minutes automatically.
+*(You may need to restart your terminal or source your profile after installation).*
 
-### Cron Run (Normal use)
-* Run `crontab -e`
-* insert `*/6 * * * * /usr/bin/python /home/pi/InfoWindow/infowindow.py --cron` 
+### 4. Clone the Repository
+
+```bash
+git clone https://github.com/Sarin-jacob/InfoWindow.git
+cd InfoWindow
+git switch shrink #Working on remaking the code
+```
+
+### 5. Install Python Dependencies
+
+Use `uv` to automatically create a virtual environment and sync all required packages (including `Flask`, `Pillow`, `rpi-lgpio`, and `adafruit-circuitpython-dht`).
+
+```bash
+uv sync
+```
+
+---
+
+## Running the Application
+
+Because the application requires direct hardware access to the SPI bus and precise microsecond timing for the DHT sensor, it must be run with `sudo` privileges using the virtual environment's Python binary.
+
+From the `InfoWindow` directory, run:
+
+```bash
+uv run app.py
+```
+
+### Usage
+
+* **Web Interface:** Open a browser on any device connected to the same network and navigate to `http://<raspberry-pi-ip>:5000`.
+* **Hardware Buttons:** Press the physical buttons to instantly wake the screen and change the active page.
 
