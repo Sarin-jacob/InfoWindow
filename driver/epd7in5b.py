@@ -143,9 +143,9 @@ class EPD:
 
     def reset(self):
         self.digital_write(self.reset_pin, GPIO.LOW)         # module reset
-        self.delay_ms(200)
+        self.delay_ms(300)
         self.digital_write(self.reset_pin, GPIO.HIGH)
-        self.delay_ms(200)    
+        self.delay_ms(300)    
 
     def get_frame_buffer(self, image):
         buf = [0x00] * int(self.width * self.height / 4)
