@@ -1,0 +1,22 @@
+[project]
+name = "infowindow"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "arrow>=1.4.0",
+    "google-api-python-client>=2.190.0",
+    "google-auth-httplib2>=0.3.0",
+    "google-auth-oauthlib>=1.2.4",
+    "ics>=0.7.2",
+    "pillow>=12.1.1",
+    "requests>=2.32.5",
+    "rpi-gpio>=0.7.1",
+    "spidev>=3.8",
+    "todoist-python>=8.1.4",
+]
+
+[tool.uv.extra-build-dependencies]
+gtasks = ["keyring","requests_oauthlib"]
+cryptography = ["pkg_resources"]
