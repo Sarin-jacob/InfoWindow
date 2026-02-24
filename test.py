@@ -6,7 +6,7 @@ import RPi.GPIO as GPIO
 from PIL import Image, ImageDraw, ImageFont
 
 # Import your local driver
-from driver.epd7in5b_V2 import EPD
+from driver.epd7in5b import EPD
 
 # Hardware Pins
 DHT_PIN = board.D5
