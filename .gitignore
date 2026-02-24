@@ -1,8 +1,1 @@
-google_secret.json
-*.pickle
-*.code-workspace
-*.pyc
-icons/*.png
-test.py
 config.json
-
