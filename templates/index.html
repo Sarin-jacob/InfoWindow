@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>InfoWindow Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; background: #f4f4f4; }
+        .card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h2 { margin-top: 0; color: #333; }
+        button, input[type="submit"] { background: #d93838; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 16px; margin: 5px 0;}
+        button:hover, input[type="submit"]:hover { background: #b02a2a; }
+        select, input[type="file"] { padding: 10px; margin: 10px 0; width: 100%; box-sizing: border-box; }
+        .current-state { font-weight: bold; color: #d93838; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Active Display</h2>
+        <p>Current Page: <span class="current-state">Page {{ state.active_page }}</span></p>
+        <form method="POST">
+            <input type="hidden" name="action" value="set_page">
+            <button type="submit" name="page" value="1">1. Clock & Sensor</button>
+            <button type="submit" name="page" value="2">2. Tasks / Calendar</button>
+            <button type="submit" name="page" value="3">3. Photo Viewer</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Calendar Source (Page 2)</h2>
+        <p>Current Source: <span class="current-state">{{ state.calendar_source | title }}</span></p>
+        <form method="POST">
+            <input type="hidden" name="action" value="set_source">
+            <select name="source">
+                <option value="todoist" {% if state.calendar_source == 'todoist' %}selected{% endif %}>Todoist</option>
+                <option value="google" {% if state.calendar_source == 'google' %}selected{% endif %}>Google Calendar</option>
+            </select>
+            <input type="submit" value="Save Source">
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Upload Photo (Page 3)</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="upload">
+            <input type="file" name="image" accept="image/jpeg, image/png, image/bmp" required>
+            <input type="submit" value="Upload & Display">
+        </form>
+    </div>
+
+</body>
+</html>
